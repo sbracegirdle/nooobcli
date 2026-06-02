@@ -1,5 +1,16 @@
 import React from 'react';
 import {Text} from 'ink';
+import type {IBufferCell, Terminal as XtermTerminal} from '@xterm/headless';
+
+type CellColorType = 'background' | 'foreground';
+
+type TerminalRun = {
+  key?: string;
+  style: Record<string, boolean | string | undefined>;
+  text: string;
+};
+
+type TerminalLike = Pick<XtermTerminal, 'buffer' | 'cols'>;
 
 const ANSI_COLORS = [
   'black',
@@ -20,7 +31,7 @@ const ANSI_COLORS = [
   'whiteBright'
 ];
 
-function colorFromCell(cell, type) {
+function colorFromCell(cell: IBufferCell, type: CellColorType): string | undefined {
   const isPalette = type === 'foreground' ? cell.isFgPalette() : cell.isBgPalette();
   const isRgb = type === 'foreground' ? cell.isFgRGB() : cell.isBgRGB();
   const color = type === 'foreground' ? cell.getFgColor() : cell.getBgColor();
@@ -36,7 +47,7 @@ function colorFromCell(cell, type) {
   return undefined;
 }
 
-function cellStyle(cell, cursor = false) {
+function cellStyle(cell: IBufferCell, cursor = false): Record<string, boolean | string | undefined> {
   const inverse = Boolean(cell.isInverse()) || cursor;
 
   return {
@@ -50,15 +61,15 @@ function cellStyle(cell, cursor = false) {
   };
 }
 
-function styleKey(style) {
+function styleKey(style: Record<string, boolean | string | undefined>): string {
   return JSON.stringify(style);
 }
 
-function terminalLineRuns(terminal, row) {
+function terminalLineRuns(terminal: TerminalLike, row: number): TerminalRun[] {
   const buffer = terminal.buffer.active;
   const line = buffer.getLine(buffer.viewportY + row);
   const cell = buffer.getNullCell();
-  const runs = [];
+  const runs: TerminalRun[] = [];
 
   if (!line) {
     return [{style: {}, text: ''}];
@@ -89,14 +100,20 @@ function terminalLineRuns(terminal, row) {
     });
   }
 
-  while (runs.length > 0 && runs.at(-1).text.trimEnd() === '') {
+  while (runs.length > 0 && runs[runs.length - 1]!.text.trimEnd() === '') {
     runs.pop();
   }
 
   return runs.length > 0 ? runs : [{style: {}, text: ''}];
 }
 
-export default function TerminalPane({terminal, rows}) {
+export default function TerminalPane({
+  terminal,
+  rows
+}: {
+  terminal: TerminalLike | undefined;
+  rows: number;
+}) {
   if (!terminal) {
     return React.createElement(Text, {dimColor: true}, 'Starting shell...');
   }

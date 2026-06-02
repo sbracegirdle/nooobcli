@@ -1,8 +1,8 @@
-export function clamp(value, min, max) {
+export function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
-export function fitText(value, width) {
+export function fitText(value: string, width: number): string {
   if (width <= 0) {
     return '';
   }

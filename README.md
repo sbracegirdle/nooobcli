@@ -10,10 +10,18 @@ Install dependencies:
 npm install
 ```
 
+This project runs TypeScript directly through Node's type-stripping runtime support, so it requires Node 22.18 or newer and does not compile before start or test commands.
+
 Run the app in an interactive terminal:
 
 ```sh
 npm start
+```
+
+Run tests:
+
+```sh
+npm test
 ```
 
 The app uses the terminal's alternate screen and expands to the full available viewport.

@@ -1,4 +1,10 @@
-export function adjacentSession(sessions, activeId, offset) {
+import type {Session} from './types.ts';
+
+export function adjacentSession(
+  sessions: Session[],
+  activeId: number | null | undefined,
+  offset: number
+): Session | undefined {
   if (sessions.length === 0) {
     return undefined;
   }

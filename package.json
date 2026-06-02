@@ -4,11 +4,13 @@
   "description": "A basic Ink terminal multiplexer.",
   "type": "module",
   "bin": {
-    "nooobcli": "source/cli.js"
+    "nooobcli": "source/cli.ts"
   },
   "scripts": {
-    "start": "node source/cli.js",
-    "dev": "node --watch source/cli.js"
+    "start": "node source/cli.ts",
+    "dev": "node --watch source/cli.ts",
+    "test": "node --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@xterm/headless": "^6.0.0",
@@ -17,7 +19,12 @@
     "react": "^19.2.7"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=22.18"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "@types/react": "^19.2.16",
+    "typescript": "^6.0.3"
+  }
 }

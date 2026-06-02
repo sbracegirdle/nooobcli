@@ -1,4 +1,4 @@
-export const DEFAULT_SESSIONS = ['main', 'work', 'logs'];
+export const DEFAULT_SESSIONS = ['main', 'work', 'logs'] as const;
 export const MAX_SIDEBAR_WIDTH = 36;
 export const MIN_SIDEBAR_WIDTH = 20;
 

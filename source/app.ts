@@ -2,12 +2,14 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Box, Text, useApp, useInput, useStdin, useStdout, useWindowSize} from 'ink';
 import pty from 'node-pty';
 import xterm from '@xterm/headless';
-import {DEFAULT_SESSIONS, shell} from './constants.js';
-import {createSessionName, keyToSequence} from './keyboard.js';
-import {getLayout, getPaneHeader, getViewportSize} from './layout.js';
-import SessionList from './session-list.js';
-import {adjacentSession} from './sessions.js';
-import TerminalPane from './terminal-pane.js';
+import type {Terminal as XtermTerminal} from '@xterm/headless';
+import {DEFAULT_SESSIONS, shell} from './constants.ts';
+import {createSessionName, keyToSequence} from './keyboard.ts';
+import {getLayout, getPaneHeader, getViewportSize} from './layout.ts';
+import SessionList from './session-list.ts';
+import {adjacentSession} from './sessions.ts';
+import TerminalPane from './terminal-pane.ts';
+import type {Session} from './types.ts';
 
 const {Terminal} = xterm;
 
@@ -16,17 +18,20 @@ export default function App() {
   const {isRawModeSupported} = useStdin();
   const {stdout} = useStdout();
   const windowSize = useWindowSize();
-  const ptysRef = useRef(new Map());
-  const terminalsRef = useRef(new Map());
+  const ptysRef = useRef(new Map<number, pty.IPty>());
+  const terminalsRef = useRef(new Map<number, XtermTerminal>());
   const nextIdRef = useRef(1);
   const [renderTick, setRenderTick] = useState(0);
-  const [sessions, setSessions] = useState([]);
-  const [activeId, setActiveId] = useState(null);
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [activeId, setActiveId] = useState<number | null>(null);
 
-  const viewport = getViewportSize({stdout, windowSize});
+  const viewport = getViewportSize({
+    stdout,
+    windowSize: {height: windowSize.rows, width: windowSize.columns}
+  });
   const layout = getLayout(viewport);
 
-  const stopSession = useCallback(id => {
+  const stopSession = useCallback((id: number) => {
     const terminal = ptysRef.current.get(id);
     const screen = terminalsRef.current.get(id);
 
@@ -42,7 +47,7 @@ export default function App() {
   }, []);
 
   const startSession = useCallback(
-    (name, {activate = true} = {}) => {
+    (name: string, {activate = true}: {activate?: boolean} = {}) => {
       const id = nextIdRef.current++;
       const screen = new Terminal({
         allowProposedApi: true,

@@ -1,7 +1,19 @@
-import {MAX_SIDEBAR_WIDTH, MIN_SIDEBAR_WIDTH} from './constants.js';
-import {clamp, fitText} from './text.js';
+import {MAX_SIDEBAR_WIDTH, MIN_SIDEBAR_WIDTH} from './constants.ts';
+import {clamp, fitText} from './text.ts';
+import type {Layout, Session, Viewport} from './types.ts';
 
-export function getViewportSize({stdout, windowSize}) {
+type SizeSource = {
+  columns?: number;
+  rows?: number;
+};
+
+export function getViewportSize({
+  stdout,
+  windowSize
+}: {
+  stdout?: SizeSource;
+  windowSize: Viewport;
+}): Viewport {
   const reportedWidth = stdout?.columns ?? process.stdout.columns ?? windowSize.width;
   const reportedHeight = stdout?.rows ?? process.stdout.rows ?? windowSize.height;
   const width = Number.isFinite(reportedWidth) ? reportedWidth : 80;
@@ -13,7 +25,7 @@ export function getViewportSize({stdout, windowSize}) {
   };
 }
 
-export function getLayout(viewport) {
+export function getLayout(viewport: Viewport): Layout {
   const headerHeight = 1;
   const bodyHeight = viewport.height - headerHeight;
   const sidebarWidth = clamp(Math.floor(viewport.width * 0.22), MIN_SIDEBAR_WIDTH, MAX_SIDEBAR_WIDTH);
@@ -34,7 +46,15 @@ export function getLayout(viewport) {
   };
 }
 
-export function getPaneHeader({cols, rows, session}) {
+export function getPaneHeader({
+  cols,
+  rows,
+  session
+}: {
+  cols: number;
+  rows: number;
+  session: Session | undefined;
+}): string {
   const width = Math.max(1, cols);
   const title = `${session?.name ?? 'none'} ${session?.status ?? ''}`;
   const meta = `${cols}x${rows}`;

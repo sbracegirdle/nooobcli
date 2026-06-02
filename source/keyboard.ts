@@ -1,8 +1,10 @@
-export function createSessionName(index) {
+import type {KeyInput} from './types.ts';
+
+export function createSessionName(index: number): string {
   return index === 0 ? 'main' : `term-${index + 1}`;
 }
 
-export function keyToSequence(input, key) {
+export function keyToSequence(input: string, key: KeyInput): string {
   if (key.upArrow) {
     return '\u001B[A';
   }

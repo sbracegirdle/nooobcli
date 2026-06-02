@@ -1,8 +1,19 @@
 import React from 'react';
 import {Box, Text} from 'ink';
-import {fitText} from './text.js';
+import {fitText} from './text.ts';
+import type {Session} from './types.ts';
 
-export default function SessionList({activeId, bodyHeight, sessions, width}) {
+export default function SessionList({
+  activeId,
+  bodyHeight,
+  sessions,
+  width
+}: {
+  activeId: number | undefined;
+  bodyHeight: number;
+  sessions: Session[];
+  width: number;
+}) {
   const contentWidth = width - 2;
   const roomy = sessions.length * 3 + 2 <= bodyHeight;
 
@@ -15,13 +26,13 @@ export default function SessionList({activeId, bodyHeight, sessions, width}) {
       const shortcut = `${index + 1}`;
       const title = fitText(`${shortcut} ${session.name}`, contentWidth);
       const status = fitText(`  ${session.status}`, contentWidth);
+      const activeProps = active ? {color: 'cyan' as const, inverse: true} : {inverse: false};
 
       if (!roomy) {
         return React.createElement(
           Text,
           {
-            color: active ? 'cyan' : undefined,
-            inverse: active,
+            ...activeProps,
             key: session.id
           },
           title
@@ -33,10 +44,7 @@ export default function SessionList({activeId, bodyHeight, sessions, width}) {
         {flexDirection: 'column', key: session.id},
         React.createElement(
           Text,
-          {
-            color: active ? 'cyan' : undefined,
-            inverse: active
-          },
+          activeProps,
           title
         ),
         React.createElement(Text, {dimColor: !active}, status),
