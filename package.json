@@ -1,0 +1,23 @@
+{
+  "name": "nooobcli",
+  "version": "0.1.0",
+  "description": "A basic Ink terminal multiplexer.",
+  "type": "module",
+  "bin": {
+    "nooobcli": "source/cli.js"
+  },
+  "scripts": {
+    "start": "node source/cli.js",
+    "dev": "node --watch source/cli.js"
+  },
+  "dependencies": {
+    "@xterm/headless": "^6.0.0",
+    "ink": "^7.0.5",
+    "node-pty": "^1.1.0",
+    "react": "^19.2.7"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}
